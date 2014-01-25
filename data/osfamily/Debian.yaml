@@ -1,0 +1,4 @@
+---
+racoon::package_name: 'racoon'
+racoon::ipsec_tools_package_name: 'ipsec-tools'
+racoon::service_name: 'racoon'

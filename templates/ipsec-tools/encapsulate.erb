@@ -1,0 +1,4 @@
+spdadd <%= @local_ip %>[<%= @port %>] <%= @remote_ip %> <%= @proto %> -P out ipsec
+        esp/transport//require;
+spdadd <%= @remote_ip %> <%= @local_ip %>[<%= @port %>] <%= @proto %> -P in ipsec
+        esp/transport//require;
