@@ -6,7 +6,7 @@ define racoon::encapsulate (
     $port,
     $proto,
 ) {
-    file { "/etc/ipsec-tools.d/${name}.conf":
+    file { "/etc/ipsec-tools.d/${name}-encapsulate.conf":
         ensure  => present,
         owner   => root,
         group   => root,

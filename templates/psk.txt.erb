@@ -1,1 +1,4 @@
-* <%= @pre_shared_key %>
+<%- @pre_shared_keys.each do |psk, params| -%>
+# <%= psk %>
+<%= params['peer'] %> <%= params['key'] %>
+<%- end -%>

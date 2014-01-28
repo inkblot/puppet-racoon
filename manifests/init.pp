@@ -6,9 +6,11 @@ class racoon (
     $ipsec_tools_package_name,
     $ipsec_tools_version,
     $service_name,
-    $public_ipv4,
-    $pre_shared_key,
-    $encapsulate = {},
+    $pre_shared_keys = {},
+    $encapsulate     = {},
+    $iptunnels       = {},
+    $remotes         = {},
+    $associations    = {},
 ) {
     File {
         ensure => present,
@@ -51,6 +53,7 @@ class racoon (
     }
 
     create_resources(racoon::encapsulate, $encapsulate)
+    create_resources(racoon::iptunnel, $iptunnels)
 
     service { 'racoon':
         name       => $service_name,

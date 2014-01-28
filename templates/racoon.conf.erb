@@ -1,3 +1,13 @@
+<%-
+remote_defaults = {
+    'passive' => false,
+    'initial_contact' => true,
+    'proposal_check' => 'strict'
+}
+sainfo_defaults = {
+    'type' => 'anonymous'
+}
+-%>
 #
 # NOTE: This file will not be used if you use racoon-tool(8) to manage your
 # IPsec connections. racoon-tool will process racoon-tool.conf(5) and
@@ -19,28 +29,48 @@
 log notify;
 path pre_shared_key "/etc/racoon/psk.txt";
 path certificate "/etc/racoon/certs";
+<%- @remotes.each do |remote, raw_params|
+      params = remote_defaults.merge(raw_params) -%>
 
-remote anonymous {
-	exchange_mode main;
+# <%= remote %>
+remote <%= params['address'] %> {
+	exchange_mode <%= params['mode'] %>;
 
-#	passive on;
-	generate_policy on;
-	my_identifier address <%= @public_ipv4 %>;
-	nat_traversal on;
-#	proposal_check obey;
+	my_identifier <%= params['my_identifier']['type'] %> <%= params['my_identifier']['value'] %>;
+<%- unless params['peers_identifier'].nil? -%>
+	peers_identifier <%= params['peers_identifier']['type'] %> <%= params['peers_identifier']['value'] %>;
+<%- end -%>
+
+	generate_policy <%= params['generate_policy'] ? 'on' : 'true' %>;
+	passive <%= params['passive'] ? 'on' : 'off' %>;
+	initial_contact <%= params['initial_contact'] ? 'on' : 'off' %>;
+	nat_traversal <%= params['nat_traversal'] %>;
+	proposal_check <%= params['proposal_check'] %>;
 
 	dpd_delay 20;
 
 	proposal {
-		encryption_algorithm aes;
-		hash_algorithm md5;
+		encryption_algorithm <%= params['proposal']['encryption_algorithm'] %>;
+		hash_algorithm <%= params['proposal']['hash_algorithm'] %>;
 		authentication_method pre_shared_key;
 		dh_group modp1024;
 	}
 }
+<%- end -%>
+<%- @associations.each do |assoc, raw_params|
+      params = sainfo_defaults.merge(raw_params)
+      case params['type']
+          when 'anonymous'
+              spec = 'anonymous'
+          when 'identifiers'
+              spec = "address #{params['local_net']} #{params['local_port']} address #{params['remote_net']} #{params['remote_port']}"
+      end
+-%>
 
-sainfo anonymous {
-	encryption_algorithm aes, 3des;
-	authentication_algorithm hmac_sha1, hmac_md5;
-	compression_algorithm deflate;
+# <%= assoc %>
+sainfo <%= spec %> {
+	encryption_algorithm <%= Array(params['encryption_algorithm']).join(', ') %>;
+	authentication_algorithm <%= Array(params['authentication_algorithm']).join(', ') %>;
+	compression_algorithm <%= params['compression_algorithm'] %>;
 }
+<%- end -%>

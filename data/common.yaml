@@ -1,4 +1,3 @@
 ---
 racoon::version: latest
 racoon::ipsec_tools_version: latest
-racoon::public_ipv4: '%{::ipaddress}'

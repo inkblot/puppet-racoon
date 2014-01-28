@@ -1,0 +1,4 @@
+spdadd <%= @local_net %> <%= @remote_net %> <%= @port %> -P out ipsec
+	esp/tunnel/<%= @local_gateway %>-<%= @remote_gateway %>/require;
+spdadd <%= @remote_net %> <%= @local_net %> <%= @port %> -P in ipsec
+	esp/tunnel/<%= @remote_gateway %>-<%= @local_gateway %>/require;
