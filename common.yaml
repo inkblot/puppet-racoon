@@ -1,2 +1,0 @@
----
-racoon::ssl_path: '/etc/racoon/ssl'
