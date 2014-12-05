@@ -1,5 +1,5 @@
 name    'inkblot/racoon'
-version '1.1.0'
+version '1.1.1'
 source  'git://github.com/inkblot/puppet-racoon'
 author  'inkblot'
 license 'Apache 2.0'
