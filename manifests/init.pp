@@ -68,6 +68,6 @@ class racoon (
         command     => '/usr/sbin/service setkey restart',
         user        => 'root',
         refreshonly => true,
-        subscribe   => File['/etc/ipsec-tools.conf'],
+        subscribe   => [ File['/etc/ipsec-tools.conf'], Service['racoon'] ],
     }
 }
