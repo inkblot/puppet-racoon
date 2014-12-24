@@ -41,7 +41,7 @@ remote <%= params['address'] %> {
 	peers_identifier <%= params['peers_identifier']['type'] %> <%= params['peers_identifier']['value'] %>;
 <%- end -%>
 
-	generate_policy <%= params['generate_policy'] ? 'on' : 'true' %>;
+	generate_policy <%= params['generate_policy'] ? 'on' : 'off' %>;
 	passive <%= params['passive'] ? 'on' : 'off' %>;
 	initial_contact <%= params['initial_contact'] ? 'on' : 'off' %>;
 	nat_traversal <%= params['nat_traversal'] %>;
