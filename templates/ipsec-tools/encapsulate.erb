@@ -1,4 +1,8 @@
-spdadd <%= @local_ip %>[<%= @port %>] <%= @remote_ip %> <%= @proto %> -P out ipsec
+<%-
+lport = @local_port == 'any' ? '' : "[#{@local_port}]"
+rport = @remote_port == 'any' ? '' : "[#{@remote_port}]"
+-%>
+spdadd <%= @local_ip %><%= lport %> <%= @remote_ip %><%= rport %> <%= @proto %> -P out ipsec
         esp/transport//require;
-spdadd <%= @remote_ip %> <%= @local_ip %>[<%= @port %>] <%= @proto %> -P in ipsec
+spdadd <%= @remote_ip %><%= rport %> <%= @local_ip %><%= lport %> <%= @proto %> -P in ipsec
         esp/transport//require;

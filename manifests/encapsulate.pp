@@ -1,10 +1,11 @@
 # ex: syntax=puppet si ts=4 sw=4 et
 
 define racoon::encapsulate (
-    $local_ip,
+    $local_ip    = '%{::ipaddress}',
     $remote_ip   = '0.0.0.0/0',
-    $port,
-    $proto,
+    $local_port  = 'any',
+    $remote_port = 'any',
+    $proto       = 'any',
 ) {
     file { "/etc/ipsec-tools.d/${name}-encapsulate.conf":
         ensure  => present,
