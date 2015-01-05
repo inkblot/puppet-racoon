@@ -5,7 +5,7 @@ define racoon::iptunnel (
     $local_gateway  = $::ipaddress,
     $remote_net,
     $remote_gateway,
-    $port           = 'any',
+    $proto          = 'any',
 ) {
     file { "/etc/ipsec-tools.d/${name}-iptunnel.conf":
         ensure  => present,
