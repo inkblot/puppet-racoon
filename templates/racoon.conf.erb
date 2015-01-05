@@ -59,11 +59,13 @@ remote <%= params['address'] %> {
 <%- end -%>
 <%- @associations.each do |assoc, raw_params|
       params = sainfo_defaults.merge(raw_params)
+      lproto = params['local_proto'] || 'any'
+      rproto = params['remote_proto'] || 'any'
       case params['type']
           when 'anonymous'
               spec = 'anonymous'
           when 'identifiers'
-              spec = "address #{params['local_net']} #{params['local_port']} address #{params['remote_net']} #{params['remote_port']}"
+              spec = "address #{params['local_net']} #{lproto} address #{params['remote_net']} #{rproto}"
       end
 -%>
 
