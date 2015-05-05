@@ -8,7 +8,10 @@ remote_defaults = {
 }
 sainfo_defaults = {
     'type' => 'anonymous',
-    'dh_group' => 'modp1024'
+    'dh_group' => 'modp1024',
+    'encryption_algorithm' => 'aes 256',
+    'authentication_algorithm' => 'hmac_sha1',
+    'compression_algorithm' => 'deflate'
 }
 -%>
 #
