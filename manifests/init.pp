@@ -10,7 +10,6 @@ class racoon (
     $encapsulate     = {},
     $iptunnels       = {},
     $remotes         = {},
-    $associations    = {},
     $log_level       = 'notify',
 ) {
     File {
