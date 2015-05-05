@@ -2,7 +2,7 @@
 
 define racoon::iptunnel (
     $local_net,
-    $local_gateway  = $::ipaddress,
+    $local_gateway  = $::racoon::local_gateway,
     $remote_net,
     $remote_gateway,
     $proto          = 'any',

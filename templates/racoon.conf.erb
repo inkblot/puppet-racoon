@@ -1,5 +1,7 @@
 <%-
 remote_defaults = {
+    'mode' => 'main',
+    'my_identifier' => { 'type' => 'address', 'value' => @local_gateway },
     'passive' => false,
     'initial_contact' => true,
     'proposal_check' => 'strict',
@@ -50,7 +52,7 @@ remote <%= params['address'] %> {
 	generate_policy <%= params['generate_policy'] ? 'on' : 'off' %>;
 	passive <%= params['passive'] ? 'on' : 'off' %>;
 	initial_contact <%= params['initial_contact'] ? 'on' : 'off' %>;
-	nat_traversal <%= params['nat_traversal'] %>;
+	nat_traversal <%= params['nat_traversal'] ? 'on' : 'off' %>;
 	proposal_check <%= params['proposal_check'] %>;
 
 	dpd_delay <%= params['dpd_delay'] %>;
@@ -89,7 +91,7 @@ sainfo <%= spec %> {
 	authentication_algorithm <%= Array(params['authentication_algorithm']).join(', ') %>;
 	compression_algorithm <%= params['compression_algorithm'] %>;
         <%- unless params['lifetime'].nil? -%>
- 	lifetime <%= params['lifetime'] %>
+ 	lifetime <%= params['lifetime'] %>;
         <%- end -%>
 }
 <%-         end
