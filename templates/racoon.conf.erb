@@ -2,10 +2,12 @@
 remote_defaults = {
     'passive' => false,
     'initial_contact' => true,
-    'proposal_check' => 'strict'
+    'proposal_check' => 'strict',
+    'dpd_delay' => 20
 }
 sainfo_defaults = {
-    'type' => 'anonymous'
+    'type' => 'anonymous',
+    'dh_group' => 'modp1024'
 }
 -%>
 #
@@ -47,13 +49,15 @@ remote <%= params['address'] %> {
 	nat_traversal <%= params['nat_traversal'] %>;
 	proposal_check <%= params['proposal_check'] %>;
 
-	dpd_delay 20;
-
+	dpd_delay <%= params['dpd_delay'] %>;
+<%- unless params['lifetime'].nil? -%>
+	lifetime <%= params['lifetime'] %>
+<% end -%>
 	proposal {
 		encryption_algorithm <%= params['proposal']['encryption_algorithm'] %>;
 		hash_algorithm <%= params['proposal']['hash_algorithm'] %>;
 		authentication_method pre_shared_key;
-		dh_group modp1024;
+		dh_group <%= params['proposal']['dh_group'] %>;
 	}
 }
 <%- end -%>
@@ -63,17 +67,27 @@ remote <%= params['address'] %> {
       rproto = params['remote_proto'] || 'any'
       case params['type']
           when 'anonymous'
-              spec = 'anonymous'
+              sainfos = ['anonymous']
           when 'identifiers'
-              spec = "address #{params['local_net']} #{lproto} address #{params['remote_net']} #{rproto}"
+              sainfos = []
+              Array(params['local_net']).each do |lnet|
+                  Array(params['remote_net']).each do |rnet|
+                      sainfos += ["address #{lnet} #{lproto} address #{rnet} #{rproto}"]
+                  end
+              end
       end
       spec = "#{spec} from #{params['from']}" if params.has_key?('from')
 -%>
 
 # <%= assoc %>
+<% sainfos.each do |spec| -%>
 sainfo <%= spec %> {
 	encryption_algorithm <%= Array(params['encryption_algorithm']).join(', ') %>;
 	authentication_algorithm <%= Array(params['authentication_algorithm']).join(', ') %>;
 	compression_algorithm <%= params['compression_algorithm'] %>;
+<%- unless params['lifetime'].nil? -%>
+	lifetime <%= params['lifetime'] %>
+<% end -%>
 }
-<%- end -%>
+<% end -%>
+<% end -%>
