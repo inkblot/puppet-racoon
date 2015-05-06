@@ -7,6 +7,7 @@ class racoon (
     $ipsec_tools_version='present',
     $service_name,
     $local_gateway   = $::ipaddress,
+    $policy_level    = 'require',
     $pre_shared_keys = {},
     $encapsulate     = {},
     $iptunnels       = {},

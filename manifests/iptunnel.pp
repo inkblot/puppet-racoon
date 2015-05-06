@@ -6,6 +6,7 @@ define racoon::iptunnel (
     $remote_net,
     $remote_gateway,
     $proto          = 'any',
+    $policy_level   = $::racoon::policy_level,
 ) {
     file { "/etc/ipsec-tools.d/${name}-iptunnel.conf":
         ensure  => present,
