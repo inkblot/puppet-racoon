@@ -26,7 +26,7 @@ sainfo_defaults = {
 # Also read the Linux IPSEC Howto up at 
 # http://www.ipsec-howto.org/t1.html 
 #
-log notify;
+log <%= @log_level %>;
 path pre_shared_key "/etc/racoon/psk.txt";
 path certificate "/etc/racoon/certs";
 <%- @remotes.each do |remote, raw_params|
@@ -67,6 +67,7 @@ remote <%= params['address'] %> {
           when 'identifiers'
               spec = "address #{params['local_net']} #{lproto} address #{params['remote_net']} #{rproto}"
       end
+      spec = "#{spec} from #{params['from']}" if params.has_key?('from')
 -%>
 
 # <%= assoc %>

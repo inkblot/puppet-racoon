@@ -11,6 +11,7 @@ class racoon (
     $iptunnels       = {},
     $remotes         = {},
     $associations    = {},
+    $log_level       = 'notify',
 ) {
     File {
         ensure => present,
