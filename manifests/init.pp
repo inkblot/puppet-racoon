@@ -2,9 +2,9 @@
 
 class racoon (
     $package_name,
-    $version,
+    $version='present',
     $ipsec_tools_package_name,
-    $ipsec_tools_version,
+    $ipsec_tools_version='present',
     $service_name,
     $pre_shared_keys = {},
     $encapsulate     = {},
@@ -22,7 +22,7 @@ class racoon (
 
     package { 'racoon':
         name   => $package_name,
-        ensure => $package_version,
+        ensure => $version,
     }
 
     package { 'ipsec-tools':
