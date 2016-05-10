@@ -1,16 +1,19 @@
 # ex: si ts=4 sw=4 et
 
 class racoon (
-    $package_name,
-    $version='present',
-    $ipsec_tools_package_name,
-    $ipsec_tools_version='present',
-    $service_name,
+    $package_name    = 'racoon',
+    $version         = 'present',
+    $ipsec_tools_package_name = 'ipsec-tools',
+    $ipsec_tools_version = 'present',
+    $service_name    = 'racoon',
+    $restart         = 'restart',
+    $setkey_restart  = 'restart',
+    $local_gateway   = $::ipaddress,
+    $policy_level    = 'require',
     $pre_shared_keys = {},
     $encapsulate     = {},
     $iptunnels       = {},
     $remotes         = {},
-    $associations    = {},
     $log_level       = 'notify',
 ) {
     File {
@@ -60,15 +63,48 @@ class racoon (
         name       => $service_name,
         ensure     => running,
         pattern    => '/usr/sbin/racoon',
-        hasstatus  => false,
-        hasrestart => true,
         subscribe  => File['/etc/racoon/racoon.conf', '/etc/racoon/psk.txt'],
     }
-
+    case $restart {
+        'restart': {
+            Service['racoon'] {
+                hasrestart => true
+            }
+        }
+        'reload': {
+            Service['racoon'] {
+                restart    => "/usr/sbin/service ${service_name} ${restart}",
+            }
+        }
+        false: {
+            Service['racoon'] {
+                restart    => '/bin/true',
+            }
+        }
+        default: {
+            fail("Invalid value for racoon::restart: ${restart}")
+        }
+    }
     exec { 'setkey restart':
-        command     => '/usr/sbin/service setkey restart',
         user        => 'root',
         refreshonly => true,
         subscribe   => [ File['/etc/ipsec-tools.conf'], Service['racoon'] ],
     }
+    case $setkey_restart {
+        'restart', 'start', 'reload': {
+            # reload is not supported in Ubuntu yet
+            Exec['setkey restart'] {
+                command => "/usr/sbin/service setkey ${setkey_restart}"
+            }
+        }
+        false: {
+            Exec['setkey restart'] {
+                command => '/bin/true'
+            }
+        }
+        default: {
+            fail("Invalid value for racoon::setkey_restart: ${setkey_restart}")
+        }
+    }
+
 }

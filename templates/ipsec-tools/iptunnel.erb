@@ -1,4 +1,12 @@
-spdadd <%= @local_net %> <%= @remote_net %> <%= @proto %> -P out ipsec
-	esp/tunnel/<%= @local_gateway %>-<%= @remote_gateway %>/require;
-spdadd <%= @remote_net %> <%= @local_net %> <%= @proto %> -P in ipsec
-	esp/tunnel/<%= @remote_gateway %>-<%= @local_gateway %>/require;
+<%
+  Array(@local_net).each do |lnet|
+    Array(@remote_net).each do |rnet|
+-%>
+spdadd <%= lnet %> <%= rnet %> <%= @proto %> -P out ipsec
+	esp/tunnel/<%= @local_gateway %>-<%= @remote_gateway %>/<%= @policy_level %>;
+spdadd <%= rnet %> <%= lnet %> <%= @proto %> -P in ipsec
+	esp/tunnel/<%= @remote_gateway %>-<%= @local_gateway %>/<%= @policy_level %>;
+
+<%  end
+  end
+-%>
