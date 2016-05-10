@@ -51,8 +51,9 @@ remote <%= params['address'] %> {
 
 	dpd_delay <%= params['dpd_delay'] %>;
 <%- unless params['lifetime'].nil? -%>
-	lifetime <%= params['lifetime'] %>
-<% end -%>
+	lifetime <%= params['lifetime'] %>;
+<%- end -%>
+
 	proposal {
 		encryption_algorithm <%= params['proposal']['encryption_algorithm'] %>;
 		hash_algorithm <%= params['proposal']['hash_algorithm'] %>;
@@ -80,14 +81,14 @@ remote <%= params['address'] %> {
 -%>
 
 # <%= assoc %>
-<% sainfos.each do |spec| -%>
+<%- sainfos.each do |spec| -%>
 sainfo <%= spec %> {
 	encryption_algorithm <%= Array(params['encryption_algorithm']).join(', ') %>;
 	authentication_algorithm <%= Array(params['authentication_algorithm']).join(', ') %>;
 	compression_algorithm <%= params['compression_algorithm'] %>;
 <%- unless params['lifetime'].nil? -%>
-	lifetime <%= params['lifetime'] %>
-<% end -%>
+	lifetime <%= params['lifetime'] %>;
+<%- end -%>
 }
-<% end -%>
-<% end -%>
+<%- end -%>
+<%- end -%>
