@@ -1,0 +1,25 @@
+{
+  "name": "inkblot/racoon",
+  "version": "3.0.0",
+  "author": "inkblot",
+  "license": "Apache-2.0",
+  "summary": "Racoon IKE server",
+  "source": "git://github.com/inkblot/puppet-racoon.git",
+  "project_page": "https://github.com/inkblot/puppet-racoon",
+  "issues_url": "https://github.com/inkblot/puppet-racoon/issues",
+  "tags": [ "debian", "ubuntu", "racoon", "ipsec", "vpn" ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [ "7.7" ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [ "12.04", "14.04", "16.04" ]
+    }
+  ],
+  "dependencies": [
+    { "name": "puppetlabs/stdlib", "version_requirement": ">= 4.1.0" }
+  ],
+  "data_provider": "hiera"
+}
