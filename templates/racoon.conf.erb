@@ -54,6 +54,9 @@ remote <%= params['address'] %> {
 	initial_contact <%= params['initial_contact'] ? 'on' : 'off' %>;
 	nat_traversal <%= params['nat_traversal'] ? 'on' : 'off' %>;
 	proposal_check <%= params['proposal_check'] %>;
+    <%- unless params['rekey'].nil? -%>
+	rekey <%= params['rekey'] %>;
+    <%- end -%>
 
 	dpd_delay <%= params['dpd_delay'] %>;
     <%- unless params['lifetime'].nil? -%>
