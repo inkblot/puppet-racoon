@@ -94,6 +94,9 @@ sainfo <%= spec %> {
             <%- unless assoc_params['lifetime'].nil? -%>
 	lifetime <%= assoc_params['lifetime'] %>;
             <%- end -%>
+            <%- unless assoc_params['pfs_group'].nil? -%>
+	pfs_group <%= assoc_params['pfs_group'] %>;
+            <%- end -%>
 }
 <%-         end
         end
