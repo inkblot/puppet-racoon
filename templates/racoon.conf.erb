@@ -1,13 +1,19 @@
 <%-
 remote_defaults = {
+    'mode' => 'main',
+    'my_identifier' => { 'type' => 'address', 'value' => @local_gateway },
     'passive' => false,
     'initial_contact' => true,
     'proposal_check' => 'strict',
-    'dpd_delay' => 20
+    'dpd_delay' => 20,
+    'associations' => []
 }
 sainfo_defaults = {
     'type' => 'anonymous',
-    'dh_group' => 'modp1024'
+    'dh_group' => 'modp1024',
+    'encryption_algorithm' => 'aes 256',
+    'authentication_algorithm' => 'hmac_sha1',
+    'compression_algorithm' => 'deflate'
 }
 -%>
 #
@@ -31,28 +37,31 @@ sainfo_defaults = {
 log <%= @log_level %>;
 path pre_shared_key "/etc/racoon/psk.txt";
 path certificate "/etc/racoon/certs";
-<%- @remotes.each do |remote, raw_params|
-      params = remote_defaults.merge(raw_params) -%>
+<% @remotes.each do |remote, given_params|
+    params = remote_defaults.merge(given_params) -%>
 
 # <%= remote %>
 remote <%= params['address'] %> {
 	exchange_mode <%= params['mode'] %>;
 
 	my_identifier <%= params['my_identifier']['type'] %> <%= params['my_identifier']['value'] %>;
-<%- unless params['peers_identifier'].nil? -%>
+    <%- unless params['peers_identifier'].nil? -%>
 	peers_identifier <%= params['peers_identifier']['type'] %> <%= params['peers_identifier']['value'] %>;
-<%- end -%>
+    <%- end -%>
 
 	generate_policy <%= params['generate_policy'] ? 'on' : 'off' %>;
 	passive <%= params['passive'] ? 'on' : 'off' %>;
 	initial_contact <%= params['initial_contact'] ? 'on' : 'off' %>;
-	nat_traversal <%= params['nat_traversal'] %>;
+	nat_traversal <%= params['nat_traversal'] ? 'on' : 'off' %>;
 	proposal_check <%= params['proposal_check'] %>;
+    <%- unless params['rekey'].nil? -%>
+	rekey <%= params['rekey'] %>;
+    <%- end -%>
 
 	dpd_delay <%= params['dpd_delay'] %>;
-<%- unless params['lifetime'].nil? -%>
+    <%- unless params['lifetime'].nil? -%>
 	lifetime <%= params['lifetime'] %>;
-<%- end -%>
+    <%- end -%>
 
 	proposal {
 		encryption_algorithm <%= params['proposal']['encryption_algorithm'] %>;
@@ -61,34 +70,38 @@ remote <%= params['address'] %> {
 		dh_group <%= params['proposal']['dh_group'] %>;
 	}
 }
-<%- end -%>
-<%- @associations.each do |assoc, raw_params|
-      params = sainfo_defaults.merge(raw_params)
-      lproto = params['local_proto'] || 'any'
-      rproto = params['remote_proto'] || 'any'
-      case params['type']
-          when 'anonymous'
-              sainfos = ['anonymous']
-          when 'identifiers'
-              sainfos = []
-              Array(params['local_net']).each do |lnet|
-                  Array(params['remote_net']).each do |rnet|
-                      sainfos += ["address #{lnet} #{lproto} address #{rnet} #{rproto}"]
-                  end
-              end
-      end
-      spec = "#{spec} from #{params['from']}" if params.has_key?('from')
--%>
-
+    <%- params['associations'].each do |assoc, given_params|
+            assoc_params = sainfo_defaults.merge(given_params)
+            lproto = assoc_params['local_proto'] || 'any'
+            rproto = assoc_params['remote_proto'] || 'any'
+            case assoc_params['type']
+                when 'anonymous'
+                    sainfos = ['anonymous']
+                when 'identifiers'
+                    sainfos = []
+                    Array(assoc_params['local_net']).each do |lnet|
+                        Array(assoc_params['remote_net']).each do |rnet|
+                            spec = "address #{lnet} #{lproto} address #{rnet} #{rproto}"
+                            spec = "#{spec} from #{params['from']}" if params.has_key?('from')
+                            sainfos += [spec]
+                        end
+                    end
+            end
+            sainfos.each do |spec|
+    -%>
 # <%= assoc %>
-<%- sainfos.each do |spec| -%>
 sainfo <%= spec %> {
-	encryption_algorithm <%= Array(params['encryption_algorithm']).join(', ') %>;
-	authentication_algorithm <%= Array(params['authentication_algorithm']).join(', ') %>;
-	compression_algorithm <%= params['compression_algorithm'] %>;
-<%- unless params['lifetime'].nil? -%>
-	lifetime <%= params['lifetime'] %>;
-<%- end -%>
+	encryption_algorithm <%= Array(assoc_params['encryption_algorithm']).join(', ') %>;
+	authentication_algorithm <%= Array(assoc_params['authentication_algorithm']).join(', ') %>;
+	compression_algorithm <%= assoc_params['compression_algorithm'] %>;
+            <%- unless assoc_params['lifetime'].nil? -%>
+	lifetime <%= assoc_params['lifetime'] %>;
+            <%- end -%>
+            <%- unless assoc_params['pfs_group'].nil? -%>
+	pfs_group <%= assoc_params['pfs_group'] %>;
+            <%- end -%>
 }
-<%- end -%>
-<%- end -%>
+<%-         end
+        end
+   end
+-%>
