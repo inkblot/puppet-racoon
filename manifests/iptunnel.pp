@@ -2,10 +2,11 @@
 
 define racoon::iptunnel (
     $local_net,
-    $local_gateway  = $::ipaddress,
+    $local_gateway  = $::racoon::local_gateway,
     $remote_net,
     $remote_gateway,
     $proto          = 'any',
+    $policy_level   = $::racoon::policy_level,
 ) {
     file { "/etc/ipsec-tools.d/${name}-iptunnel.conf":
         ensure  => present,
